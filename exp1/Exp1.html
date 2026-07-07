@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CSS Types</title>
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- Internal CSS -->
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+        }
+
+        .internal-h1 {
+            color: blue;
+            font-size: 35px;
+        }
+
+        .internal-p {
+            color: red;
+            font-size: 18px;
+        }
+
+        .internal-btn {
+            background-color: #3498db;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Name and PRN -->
+    <div style="position:absolute; top:10px; right:20px;">
+        <strong>Name:</strong>Pranav Lakhe <br>
+        <strong>PRN:</strong> 24070521248
+    </div>
+
+    <h2>1. Internal CSS</h2>
+    <h1 class="internal-h1">Welcome to Internal CSS</h1>
+    <p class="internal-p">This webpage is styled using Internal CSS.</p>
+    <button class="internal-btn">Click Here</button>
+
+    <hr>
+
+    <h2>2. Inline CSS</h2>
+    <h1 style="color:rgb(46, 250, 5); font-size:35px;">Welcome to Inline CSS</h1>
+    <p style="color:rgb(97, 16, 226); font-size:18px;">This webpage is styled using Inline CSS.</p>
+    <button style="background:#3498db; color:white; padding:10px 20px; border:none; border-radius:5px;">
+        Click Here
+    </button>
+
+    <hr>
+
+    <h2>3. External CSS</h2>
+    <h1 class="external-h1">Welcome to External CSS</h1>
+    <p class="external-p">This webpage is styled using External CSS.</p>
+    <button class="external-btn">Click Here</button>
+
+</body>
+</html>
