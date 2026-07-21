@@ -1,0 +1,37 @@
+body.billing-body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: linear-gradient(135deg, #f7fbff 0%, #e6f0ff 100%);
+    color: #102a43;
+    margin: 0;
+    padding: 40px;
+}
+
+.bill-container {
+    max-width: 600px;
+    margin: 24px auto;
+    background: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 6px 18px rgba(16, 42, 67, 0.08);
+    padding: 24px 28px;
+}
+
+.title {
+    margin: 0 0 12px 0;
+    color: #0b3d91;
+    font-size: 1.6rem;
+}
+
+h3 {
+    color: #102a43;
+    margin-top: 12px;
+}
+
+p {
+    margin: 6px 0;
+    line-height: 1.4;
+}
+
+@media (max-width: 480px) {
+    .bill-container { padding: 16px; margin: 16px; }
+    .title { font-size: 1.25rem; }
+}

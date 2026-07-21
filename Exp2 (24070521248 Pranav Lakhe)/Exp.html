@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Billing Calculator</title>
+    <link rel="stylesheet" href="Style.css">
+</head>
+<body class="billing-body">
+    <h2 class="title">Billing Calculator</h2>
+    <div class="bill-container">
+    <script>
+        // Demonstrate const (immutable block-scoped)
+        const GST = 0.18;
+        
+        // Demonstrate var (function-scoped/global)
+        var coustomername = prompt("Enter your name:");
+        var productname = prompt("Enter the name of product:");
+        var quantity = Number(prompt("Enter quantity: "));
+        var price = Number(prompt("Enter Price per unit:"));
+
+        // Demonstrate let (mutable block-scoped)
+        let total = quantity * price;
+        let getAmount = total * GST;
+        let finalAmount = getAmount + total;
+
+        // Creating the bill object
+        const bill = {
+            coustomer: coustomername,
+            product: productname,
+            quantity,
+            price,
+            total,
+            getAmount,
+            finalbill: finalAmount
+        };
+
+        // Demonstrate Destructuring (with default value fallback and lowercase match)
+        const {
+            coustomer,
+            product,
+            getAmount: gstAmount = total * GST,
+            finalbill
+        } = bill;
+
+        // Demonstrate Template Literals
+        document.write('<h3> Your Bill </h3>');
+        document.write(`<p>Customer Name: ${coustomer}</p> `);
+        document.write(`<p>Product: ${product}</p> `);
+        document.write(`<p>Quantity: ${quantity}</p> `);
+        document.write(`<p>Price per Unit: ${price}</p> `);
+        document.write(`<p>Total Amount: ${total}</p> `);
+        document.write(`<p>GST (18%): ${gstAmount}</p> `);
+        document.write(`<p>Final Amount: ${finalbill}</p> `);
+
+    </script>
+    </div>
+</body>
+
+</html>
