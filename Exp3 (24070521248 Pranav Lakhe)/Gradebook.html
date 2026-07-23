@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Grading System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #EEF2F7;
+    --surface: #FFFFFF;
+    --border: #E2E8F0;
+    --text: #0F172A;
+    --text-muted: #64748B;
+    --primary: #1E3A5F;
+    --accent: #2563EB;
+    --accent-hover: #1D4ED8;
+
+    --red: #DC2626;  --red-soft: #FEF2F2;  --red-border: #FECACA;
+    --amber: #D97706; --amber-soft: #FFFBEB; --amber-border: #FDE68A;
+    --gold: #CA8A04;  --gold-soft: #FEFCE8;  --gold-border: #FEF08A;
+    --blue: #2563EB;  --blue-soft: #EFF6FF;  --blue-border: #BFDBFE;
+    --green: #16A34A; --green-soft: #F0FDF4; --green-border: #BBF7D0;
+  }
+
+  *{ box-sizing:border-box; margin:0; padding:0; }
+
+  @media(prefers-reduced-motion:reduce){
+    *{ animation-duration:.001ms!important; transition-duration:.001ms!important; }
+  }
+
+  body{
+    min-height:100vh;
+    background:var(--bg);
+    font-family:'Inter',sans-serif;
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:36px 20px 60px;
+  }
+
+  /* ========== Layout ========== */
+  .main{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:28px;
+    max-width:1100px;
+    width:100%;
+  }
+  @media(max-width:920px){ .main{ grid-template-columns:1fr; } }
+
+  /* ========== Left panel (form) ========== */
+  .panel{
+    background:var(--surface);
+    border-radius:16px;
+    padding:36px 32px;
+    box-shadow:0 1px 3px rgba(0,0,0,.05),0 6px 16px rgba(0,0,0,.04);
+  }
+
+  .inst-header{ text-align:center; margin-bottom:26px; padding-bottom:22px; border-bottom:1px solid var(--border); }
+  .inst-logo{ font-size:42px; line-height:1; margin-bottom:8px; }
+  .inst-header h1{ font-size:1.25rem; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .inst-header .sub{ font-size:13px; color:var(--text-muted); }
+
+  /* ---- Form fields ---- */
+  .fg{ margin-bottom:16px; }
+  .fg-label{ display:block; font-size:13px; font-weight:500; color:var(--text); margin-bottom:6px; }
+  .fg-input{
+    width:100%;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    padding:10px 14px;
+    border-radius:8px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    color:var(--text);
+    outline:none;
+    transition:border-color .15s,box-shadow .15s;
+  }
+  .fg-input::placeholder{ color:#94A3B8; }
+  .fg-input:focus{ border-color:var(--accent); box-shadow:0 0 0 3px rgba(37,99,235,.1); }
+  .fg-input[aria-invalid="true"]{ border-color:var(--red-border); background:var(--red-soft); }
+  .err{ display:block; min-height:17px; font-size:12px; color:var(--red); margin-top:4px; }
+
+  /* ---- Section label ---- */
+  .sec-label{ font-size:13px; font-weight:500; color:var(--text); margin:22px 0 10px; }
+
+  /* ---- Subject rows ---- */
+  .subj-row{
+    display:grid;
+    grid-template-columns:1fr 90px 36px;
+    gap:8px;
+    align-items:center;
+    margin-bottom:8px;
+  }
+  .subj-row .fg-input{ width:100%; }
+
+  .del-btn{
+    width:36px; height:40px;
+    display:flex; align-items:center; justify-content:center;
+    border:1px solid var(--border);
+    border-radius:8px;
+    background:var(--surface);
+    cursor:pointer;
+    transition:background .15s,border-color .15s;
+  }
+  .del-btn svg{ width:16px; height:16px; stroke:var(--text-muted); transition:stroke .15s; }
+  .del-btn:hover{ background:var(--red-soft); border-color:var(--red-border); }
+  .del-btn:hover svg{ stroke:var(--red); }
+
+  .add-btn{
+    display:inline-flex; align-items:center; gap:3px;
+    background:none; border:none;
+    color:var(--accent);
+    font-family:'Inter',sans-serif;
+    font-size:13px; font-weight:600;
+    cursor:pointer;
+    padding:6px 2px;
+    margin-top:2px;
+    transition:color .15s;
+  }
+  .add-btn:hover{ color:var(--accent-hover); }
+
+  .submit-btn{
+    width:100%;
+    padding:14px;
+    margin-top:22px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#1E3A5F 0%,#2563EB 100%);
+    color:#fff;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:opacity .15s,transform .08s;
+    letter-spacing:.01em;
+  }
+  .submit-btn:hover{ opacity:.92; }
+  .submit-btn:active{ transform:scale(.99); }
+  .submit-btn:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  /* ========== Right panel (transcript) ========== */
+  .tr-panel{ align-self:start; }
+
+  .transcript{
+    border:2px dashed var(--accent);
+    border-radius:14px;
+    padding:32px 28px;
+    background:var(--surface);
+    min-height:420px;
+    box-shadow:0 1px 3px rgba(0,0,0,.04);
+  }
+
+  .tr-placeholder{
+    display:flex; align-items:center; justify-content:center;
+    min-height:380px;
+    text-align:center;
+    color:var(--text-muted);
+    font-size:14px;
+    line-height:1.7;
+  }
+
+  @keyframes fadeSlide{
+    from{ opacity:0; transform:translateY(6px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  .tr-content{ animation:fadeSlide .3s ease-out; }
+
+  .tr-hd{ text-align:center; margin-bottom:18px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+  .tr-hd h2{ font-size:15px; font-weight:700; color:var(--accent); letter-spacing:.06em; text-transform:uppercase; margin-bottom:2px; }
+  .tr-hd .tr-sub{ font-size:11px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
+
+  .tr-info{
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:6px;
+    font-size:13px;
+    padding:10px 0;
+    border-bottom:1px solid var(--border);
+  }
+  .tr-info span{ color:var(--text-muted); }
+  .tr-info strong{ color:var(--text); }
+
+  /* ---- Transcript table ---- */
+  .transcript table{ width:100%; border-collapse:collapse; margin:14px 0; font-size:13px; }
+  .transcript thead th{
+    text-align:left;
+    font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--text);
+    padding:10px 8px;
+    border-bottom:2px solid var(--text);
+  }
+  .transcript thead th:nth-child(2),
+  .transcript thead th:nth-child(3){ text-align:center; }
+  .transcript tbody td{
+    padding:10px 8px;
+    border-bottom:1px solid var(--border);
+    color:var(--text);
+  }
+  .transcript tbody td:nth-child(2),
+  .transcript tbody td:nth-child(3){ text-align:center; }
+  .transcript tbody td.mono{ font-family:'JetBrains Mono',monospace; font-size:13px; }
+  .transcript tbody tr:last-child td{ border-bottom:none; }
+
+  /* ---- Summary ---- */
+  .tr-summary{ padding-top:14px; border-top:1px solid var(--border); font-size:13px; }
+  .s-row{ display:flex; justify-content:space-between; align-items:center; padding:5px 0; }
+  .s-row .s-lbl{ color:var(--text-muted); }
+  .s-row .s-val{ font-weight:600; font-family:'JetBrains Mono',monospace; font-size:13px; }
+
+  /* ---- Badge ---- */
+  .badge{
+    display:inline-flex; align-items:center; justify-content:center;
+    padding:2px 10px; border-radius:6px;
+    font-weight:700; font-size:12px;
+    border:1px solid transparent;
+  }
+
+  /* ---- Approval ---- */
+  .tr-approval{ text-align:center; margin-top:22px; padding-top:14px; border-top:1px solid var(--border); }
+  .tr-approval .approved{ font-style:italic; font-size:15px; color:var(--text); margin-bottom:2px; }
+  .tr-approval .registrar{ font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:.05em; color:var(--text-muted); }
+
+  /* ========== Footer ========== */
+  .page-ft{
+    margin-top:36px;
+    padding-top:18px;
+    border-top:1px solid var(--border);
+    text-align:center;
+    font-size:12px;
+    color:var(--text-muted);
+    width:100%;
+    max-width:1100px;
+  }
+  .page-ft strong{ color:var(--text); }
+
+  /* ========== Print ========== */
+  @media print{
+    body{ background:#fff; padding:0; }
+    .no-print{ display:none!important; }
+    .main{ grid-template-columns:1fr; }
+    .transcript{ border-color:#333; box-shadow:none; }
+    .page-ft{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="main">
+  <!-- ========== Left: Form ========== -->
+  <div class="panel no-print">
+    <div class="inst-header">
+      
+      <h1>Symbiosis Institute of Technology</h1>
+      <div class="sub">Student Grading Portal</div>
+    </div>
+
+    <form id="grade-form" novalidate>
+      <div class="fg">
+        <label class="fg-label" for="student-name">Student Name</label>
+        <input type="text" class="fg-input" id="student-name" placeholder="e.g. Aryan Raut" autocomplete="off">
+        <span class="err" id="name-error" role="alert"></span>
+      </div>
+
+      <div class="fg">
+        <label class="fg-label" for="student-prn">PRN (11-digit number)</label>
+        <input type="text" class="fg-input" id="student-prn" placeholder="e.g. 12345678901" inputmode="numeric" maxlength="11" autocomplete="off">
+        <span class="err" id="prn-error" role="alert"></span>
+      </div>
+
+      <div class="sec-label">Subject Marks (0–100)</div>
+      <div id="subject-fields"></div>
+      <span class="err" id="subjects-error" role="alert"></span>
+
+      <button type="button" class="add-btn" id="add-btn">+ Add Subject</button>
+
+      <button type="submit" class="submit-btn">Calculate &amp; Generate Report</button>
+    </form>
+  </div>
+
+  <!-- ========== Right: Transcript ========== -->
+  <div class="tr-panel">
+    <div class="transcript" id="transcript-wrap">
+      <div class="tr-placeholder">
+        <p>Submit the form to generate<br>an official academic transcript.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<footer class="page-ft no-print">
+  <p>Grading scale &nbsp;·&nbsp; 0–50 Fail &nbsp;·&nbsp; 51–59 D &nbsp;·&nbsp; 60–69 C &nbsp;·&nbsp; 70–79 B &nbsp;·&nbsp; 80–89 A &nbsp;·&nbsp; 90–100 A+</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+
+  // ---- Default engineering subjects ----
+  var DEFAULT_SUBJECTS = [
+    "Engineering Mathematics",
+    "Data Structures & Algorithms",
+    "Database Management Systems",
+    "Operating Systems",
+    "Computer Networks"
+  ];
+
+  // ---- Grade colour tokens ----
+  var GRADE_COLORS = {
+    "Fail": { text:"var(--red)",   bg:"var(--red-soft)",   border:"var(--red-border)" },
+    "D":    { text:"var(--amber)", bg:"var(--amber-soft)", border:"var(--amber-border)" },
+    "C":    { text:"var(--gold)",  bg:"var(--gold-soft)",  border:"var(--gold-border)" },
+    "B":    { text:"var(--blue)",  bg:"var(--blue-soft)",  border:"var(--blue-border)" },
+    "A":    { text:"var(--green)", bg:"var(--green-soft)", border:"var(--green-border)" },
+    "A+":   { text:"var(--green)", bg:"var(--green-soft)", border:"var(--green-border)" }
+  };
+
+  // ---- DOM refs ----
+  var form             = document.getElementById('grade-form');
+  var nameInput        = document.getElementById('student-name');
+  var nameError        = document.getElementById('name-error');
+  var prnInput         = document.getElementById('student-prn');
+  var prnError         = document.getElementById('prn-error');
+  var subjectContainer = document.getElementById('subject-fields');
+  var subjectsError    = document.getElementById('subjects-error');
+  var addBtn           = document.getElementById('add-btn');
+  var transcriptWrap   = document.getElementById('transcript-wrap');
+
+  var NAME_PATTERN = /^[A-Za-z][A-Za-z.'\- ]{1,39}$/;
+  var PRN_PATTERN  = /^\d{11}$/;
+
+  // ---- SVG trash icon (reused) ----
+  var TRASH_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>';
+
+  // ===========================================================
+  //  Dynamic subject rows
+  // ===========================================================
+  function addSubjectRow(name){
+    var row = document.createElement('div');
+    row.className = 'subj-row';
+    row.innerHTML =
+      '<input type="text" class="fg-input sn" placeholder="Subject name" value="' + escHtml(name || '') + '">' +
+      '<input type="text" class="fg-input sm" inputmode="decimal" placeholder="0–100">' +
+      '<button type="button" class="del-btn" title="Remove subject">' + TRASH_SVG + '</button>';
+
+    row.querySelector('.del-btn').addEventListener('click', function(){ row.remove(); });
+
+    var marksEl = row.querySelector('.sm');
+    marksEl.addEventListener('blur', function(){ setField(marksEl, validateMarks(marksEl.value)); });
+    marksEl.addEventListener('input', function(){ if(marksEl.getAttribute('aria-invalid')) setField(marksEl, validateMarks(marksEl.value)); });
+
+    subjectContainer.appendChild(row);
+    return row;
+  }
+
+  // Seed with default subjects using a for loop
+  for(var d = 0; d < DEFAULT_SUBJECTS.length; d++){
+    addSubjectRow(DEFAULT_SUBJECTS[d]);
+  }
+
+  addBtn.addEventListener('click', function(){
+    var row = addSubjectRow('');
+    row.querySelector('.sn').focus();
+  });
+
+  // ===========================================================
+  //  Validation helpers
+  // ===========================================================
+  function validateName(v){
+    var t = v.trim();
+    if(!t) return "Enter the student\u2019s name.";
+    if(!NAME_PATTERN.test(t)) return "Letters, spaces, apostrophes or hyphens (2\u201340 chars).";
+    return "";
+  }
+
+  function validatePRN(v){
+    var t = v.trim();
+    if(!t) return "Enter the student\u2019s PRN.";
+    if(!PRN_PATTERN.test(t)) return "PRN must be exactly 11 numeric digits.";
+    return "";
+  }
+
+  function validateMarks(v){
+    var t = v.trim();
+    if(!t) return "Enter marks.";
+    if(!/^\d+(\.\d{1,2})?$/.test(t)) return "Positive number only (up to 2 decimals).";
+    var n = parseFloat(t);
+    if(n < 0 || n > 100) return "Must be between 0 and 100.";
+    return "";
+  }
+
+  function validateSubjectName(v){
+    var t = v.trim();
+    if(!t) return "Enter subject name.";
+    if(t.length < 2 || t.length > 60) return "2\u201360 characters.";
+    return "";
+  }
+
+  function setField(el, msg){
+    if(msg){ el.setAttribute('aria-invalid','true'); el.title = msg; }
+    else   { el.removeAttribute('aria-invalid');      el.title = ''; }
+  }
+
+  function setFieldErr(el, errEl, msg){
+    if(msg){ el.setAttribute('aria-invalid','true'); errEl.textContent = msg; }
+    else   { el.removeAttribute('aria-invalid');      errEl.textContent = ''; }
+  }
+
+  // Live validation on name & PRN
+  nameInput.addEventListener('blur', function(){ setFieldErr(nameInput, nameError, validateName(nameInput.value)); });
+  nameInput.addEventListener('input', function(){ if(nameInput.getAttribute('aria-invalid')) setFieldErr(nameInput, nameError, validateName(nameInput.value)); });
+
+  prnInput.addEventListener('blur', function(){ setFieldErr(prnInput, prnError, validatePRN(prnInput.value)); });
+  prnInput.addEventListener('input', function(){ if(prnInput.getAttribute('aria-invalid')) setFieldErr(prnInput, prnError, validatePRN(prnInput.value)); });
+
+  // ===========================================================
+  //  Grading — if / else-if chain (control structure #1)
+  // ===========================================================
+  function getGradeInfo(marks){
+    var letter;
+
+    if(marks <= 50){
+      letter = "Fail";
+    } else if(marks <= 59){
+      letter = "D";
+    } else if(marks <= 69){
+      letter = "C";
+    } else if(marks <= 79){
+      letter = "B";
+    } else if(marks <= 89){
+      letter = "A";
+    } else {
+      letter = "A+";
+    }
+
+    // Remark via switch statement (control structure #2)
+    var remark;
+    switch(letter){
+      case "Fail": remark = "Below passing threshold."; break;
+      case "D":    remark = "Passed, needs improvement."; break;
+      case "C":    remark = "Satisfactory."; break;
+      case "B":    remark = "Good, consistent performance."; break;
+      case "A":    remark = "Very good performance."; break;
+      case "A+":   remark = "Outstanding performance."; break;
+      default:     remark = "";
+    }
+
+    return { letter: letter, remark: remark };
+  }
+
+  // ===========================================================
+  //  Utility
+  // ===========================================================
+  function fmt(n){ return n.toFixed(n % 1 === 0 ? 0 : 2); }
+
+  function escHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s;
+    return d.innerHTML;
+  }
+
+  function badge(letter){
+    var c = GRADE_COLORS[letter] || GRADE_COLORS["C"];
+    return '<span class="badge" style="color:'+c.text+';background:'+c.bg+';border-color:'+c.border+'">'+letter+'</span>';
+  }
+
+  // ===========================================================
+  //  Render transcript
+  // ===========================================================
+  function renderTranscript(rc){
+    var rows = '';
+    for(var i = 0; i < rc.subjects.length; i++){
+      var s = rc.subjects[i];
+      rows +=
+        '<tr>' +
+          '<td>' + escHtml(s.subject) + '</td>' +
+          '<td class="mono"><strong>' + fmt(s.marks) + '</strong> / 100</td>' +
+          '<td>' + badge(s.letter) + '</td>' +
+        '</tr>';
+    }
+
+    var maxTotal = rc.subjects.length * 100;
+    var resColor = rc.result === "Pass" ? "var(--green)" : "var(--red)";
+    var resText  = rc.result === "Pass" ? "Passed" : "Failed";
+
+    transcriptWrap.innerHTML =
+      '<div class="tr-content">' +
+        '<div class="tr-hd">' +
+          '<h2>International Institute of Technology</h2>' +
+          '<div class="tr-sub">Official Academic Transcript</div>' +
+        '</div>' +
+
+        '<div class="tr-info">' +
+          '<div><span>Student Name: </span><strong>' + escHtml(rc.name) + '</strong></div>' +
+          '<div><span>Date of Issue: </span><strong>' + rc.date.toLocaleDateString(undefined,{year:"numeric",month:"long",day:"numeric"}) + '</strong></div>' +
+        '</div>' +
+        '<div class="tr-info">' +
+          '<div><span>PRN: </span><strong>' + escHtml(rc.prn) + '</strong></div>' +
+        '</div>' +
+
+        '<table>' +
+          '<thead><tr><th>Subject</th><th>Marks</th><th>Grade</th></tr></thead>' +
+          '<tbody>' + rows + '</tbody>' +
+        '</table>' +
+
+        '<div class="tr-summary">' +
+          '<div class="s-row"><span class="s-lbl">Aggregate Total:</span><span class="s-val">' + fmt(rc.total) + ' / ' + maxTotal + '</span></div>' +
+          '<div class="s-row"><span class="s-lbl">Final Percentage:</span><span class="s-val">' + fmt(rc.percentage) + '%</span></div>' +
+          '<div class="s-row"><span class="s-lbl">Academic Grade:</span><span>' + badge(rc.overallLetter) + '</span></div>' +
+          '<div class="s-row"><span class="s-lbl" style="color:'+resColor+';font-weight:600">Result Status:</span><span class="s-val" style="color:'+resColor+'">' + resText + '</span></div>' +
+        '</div>' +
+
+        '<div class="tr-approval">' +
+          '<div class="approved">Approved</div>' +
+          '<div class="registrar">Registrar (Evaluation)</div>' +
+        '</div>' +
+      '</div>';
+  }
+
+  // ===========================================================
+  //  Form submit
+  // ===========================================================
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+
+    // Validate name
+    var nameMsg = validateName(nameInput.value);
+    setFieldErr(nameInput, nameError, nameMsg);
+
+    // Validate PRN
+    var prnMsg = validatePRN(prnInput.value);
+    setFieldErr(prnInput, prnError, prnMsg);
+
+    var firstInvalid = nameMsg ? nameInput : (prnMsg ? prnInput : null);
+    var allValid = !nameMsg && !prnMsg;
+
+    // Must have at least one subject
+    var rows = subjectContainer.querySelectorAll('.subj-row');
+    if(rows.length === 0){
+      subjectsError.textContent = "Add at least one subject.";
+      allValid = false;
+    } else {
+      subjectsError.textContent = "";
+    }
+
+    // Validate each subject row using a for loop
+    var subjectResults = [];
+
+    for(var i = 0; i < rows.length; i++){
+      var snEl = rows[i].querySelector('.sn');
+      var smEl = rows[i].querySelector('.sm');
+
+      var snMsg = validateSubjectName(snEl.value);
+      setField(snEl, snMsg);
+
+      var smMsg = validateMarks(smEl.value);
+      setField(smEl, smMsg);
+
+      if(snMsg || smMsg){
+        allValid = false;
+        if(!firstInvalid) firstInvalid = snMsg ? snEl : smEl;
+      } else {
+        subjectResults.push({ subject: snEl.value.trim(), marks: parseFloat(smEl.value.trim()) });
+      }
+    }
+
+    if(!allValid){
+      if(firstInvalid) firstInvalid.focus();
+      return;
+    }
+
+    // ---- Compute grades (for loop + getGradeInfo) ----
+    var total = 0;
+    var anyFail = false;
+
+    for(var j = 0; j < subjectResults.length; j++){
+      var gi = getGradeInfo(subjectResults[j].marks);
+      subjectResults[j].letter = gi.letter;
+      subjectResults[j].remark = gi.remark;
+      total += subjectResults[j].marks;
+      if(gi.letter === "Fail") anyFail = true;
+    }
+
+    var percentage = (total / (subjectResults.length * 100)) * 100;
+    var overall = getGradeInfo(percentage);
+
+    var reportCard = {
+      name:          nameInput.value.trim(),
+      prn:           prnInput.value.trim(),
+      date:          new Date(),
+      subjects:      subjectResults,
+      total:         total,
+      percentage:    percentage,
+      overallLetter: overall.letter,
+      result:        anyFail ? "Fail" : "Pass"
+    };
+
+    renderTranscript(reportCard);
+
+    // Scroll transcript into view on mobile
+    transcriptWrap.scrollIntoView({ behavior:'smooth', block:'start' });
+  });
+
+})();
+</script>
+</body>
+</html>
