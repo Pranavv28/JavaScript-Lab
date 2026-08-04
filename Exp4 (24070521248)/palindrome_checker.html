@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classic Palindrome Checker Suite</title>
+    <!-- Modern Classic Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+    <div class="app-wrapper">
+        <!-- Header Section -->
+        <header class="classic-header">
+            <div class="header-badge">
+                <span>❖ Classic Edition</span>
+            </div>
+            <h1>Palindrome Checker</h1>
+            <p>Functions, Scope, Closures & Exception Handling Verification Suite</p>
+        </header>
+
+        <!-- 2-Column Split Workspace -->
+        <div class="workspace-split">
+            
+            <!-- Left Column: Controls & Input Form -->
+            <section class="classic-card panel-left">
+                <h2 class="panel-title">Input & Verification</h2>
+
+                <!-- Form Inputs -->
+                <form id="palindromeForm" onsubmit="event.preventDefault(); handleCheck();">
+                    
+                    <!-- Text Input -->
+                    <div class="form-group">
+                        <label for="textInput">
+                            <span class="icon">✎</span> Text / Word Input
+                        </label>
+                        <input type="text" id="textInput" class="input-field" placeholder="Enter word or phrase (e.g., Racecar, Madam)" autocomplete="off">
+                    </div>
+
+                    <!-- Number / Sequence Input -->
+                    <div class="form-group">
+                        <label for="numberInput">
+                            <span class="icon">#</span> Number / Sequence Input
+                        </label>
+                        <input type="text" id="numberInput" class="input-field" placeholder="Enter number sequence (e.g., 12321, 98789)" autocomplete="off">
+                    </div>
+
+                    <!-- Analysis Options -->
+                    <div class="options-bar">
+                        <label class="option-toggle">
+                            <input type="checkbox" id="optIgnorePunctuation" checked>
+                            <span>Ignore spaces & punctuation</span>
+                        </label>
+                        <label class="option-toggle">
+                            <input type="checkbox" id="optCaseSensitive">
+                            <span>Case-sensitive matching</span>
+                        </label>
+                    </div>
+
+                    <!-- Presets Bar -->
+                    <div class="presets-container">
+                        <div class="presets-label">Quick Test Presets:</div>
+                        <div class="presets-tags">
+                            <button type="button" class="preset-chip" onclick="loadPreset('Racecar', '12321')">Racecar / 12321</button>
+                            <button type="button" class="preset-chip" onclick="loadPreset('A man, a plan, a canal: Panama', '9876789')">Panama / 9876789</button>
+                            <button type="button" class="preset-chip" onclick="loadPreset('Step on no pets', '100001')">Step on no pets / 100001</button>
+                            <button type="button" class="preset-chip" onclick="loadPreset('Madam', '20202')">Madam / 20202</button>
+                            <button type="button" class="preset-chip" onclick="loadPreset('Hello World', '12345')">Non-Palindrome</button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary">
+                            <span>Verify Palindromes</span>
+                        </button>
+                        <button type="button" class="btn btn-secondary" onclick="clearAll()">
+                            <span>Clear All</span>
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Right Column: Output & Analysis Results -->
+            <section class="classic-card panel-right">
+                <h2 class="panel-title">
+                    <span>Analysis Output</span>
+                    <span id="liveStatusBadge" style="font-size: 0.75rem; color: var(--text-light); font-weight: 500;">Ready</span>
+                </h2>
+
+                <!-- Notifications -->
+                <div id="errorBox" class="notice-box error"></div>
+                <div id="infoBox" class="notice-box info"></div>
+
+                <!-- Empty State Prompt -->
+                <div id="emptyState" class="empty-state">
+                    <div class="icon">📊</div>
+                    <p>Enter text or a sequence on the left and click <strong>Verify Palindromes</strong> to view analysis output here.</p>
+                </div>
+
+                <!-- Results Output Grid -->
+                <div class="results-grid">
+                    <!-- Text Result Card -->
+                    <div id="textResultCard" class="result-card">
+                        <div class="card-header-title">
+                            <span>Text Analysis</span>
+                            <span id="textBadge"></span>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-label">Original:</span>
+                            <span class="metric-value" id="textOriginal"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Processed:</span>
+                            <span class="metric-value" id="textProcessed"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Reversed:</span>
+                            <span class="metric-value" id="textReversed"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Length:</span>
+                            <span class="metric-value" id="textLength"></span>
+                        </div>
+
+                        <!-- Character Breakdown Bubbles -->
+                        <div class="breakdown-box">
+                            <div class="breakdown-title">Character Alignment:</div>
+                            <div id="textCharBubbles" class="char-bubbles"></div>
+                        </div>
+                    </div>
+
+                    <!-- Number Result Card -->
+                    <div id="numberResultCard" class="result-card">
+                        <div class="card-header-title">
+                            <span>Sequence Analysis</span>
+                            <span id="numberBadge"></span>
+                        </div>
+                        
+                        <div class="metric-row">
+                            <span class="metric-label">Original:</span>
+                            <span class="metric-value" id="numberOriginal"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Processed:</span>
+                            <span class="metric-value" id="numberProcessed"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Reversed:</span>
+                            <span class="metric-value" id="numberReversed"></span>
+                        </div>
+                        <div class="metric-row">
+                            <span class="metric-label">Length:</span>
+                            <span class="metric-value" id="numberLength"></span>
+                        </div>
+
+                        <!-- Character Breakdown Bubbles -->
+                        <div class="breakdown-box">
+                            <div class="breakdown-title">Character Alignment:</div>
+                            <div id="numberCharBubbles" class="char-bubbles"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Concepts Educational Section -->
+        <section class="classic-card concept-section">
+            <h2 class="section-title">Core JavaScript Concepts Demonstrated</h2>
+            <div class="concept-grid">
+                <div class="concept-item">
+                    <h3>⚡ IIFE & Closures</h3>
+                    <p>Private variables (check counters, timestamps) encapsulated using an Immediately Invoked Function Expression.</p>
+                </div>
+                <div class="concept-item">
+                    <h3>🛡️ Exception Handling</h3>
+                    <p>Robust <code>try...catch</code> blocks validate inputs and handle edge cases gracefully.</p>
+                </div>
+                <div class="concept-item">
+                    <h3>🎯 Function Scoping</h3>
+                    <p>Demonstrates lexical scope, arrow functions, and method expressions within a structured API pattern.</p>
+                </div>
+                <div class="concept-item">
+                    <h3>🔄 String Reversal Algorithm</h3>
+                    <p>Efficient string splitting, array reversal, and regex normalization to verify symmetry.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="classic-footer">
+            <p><strong>Palindrome Verification Suite</strong></p>
+            <p>Experiment 4 — JavaScript Functions, Scope & Closures</p>
+        </footer>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // ============================================
+        // CLOSURE PATTERN: Private Scope Module
+        // ============================================
+        const PalindromeChecker = (function() {
+            let checkCounter = 0;
+            let lastExecution = null;
+
+            // Internal helper: Reverse string
+            function reverseString(str) {
+                return str.split('').reverse().join('');
+            }
+
+            // Internal helper: Normalize string with dynamic options
+            function normalizeString(str, ignorePunctuation = true, caseSensitive = false) {
+                let result = str;
+                if (ignorePunctuation) {
+                    result = result.replace(/[^a-zA-Z0-9]/g, '');
+                }
+                if (!caseSensitive) {
+                    result = result.toLowerCase();
+                }
+                return result;
+            }
+
+            // Core verification method
+            function evaluateInput(input, options = {}) {
+                if (typeof input !== 'string' || input.trim() === '') {
+                    throw new Error('Input must be a non-empty text string or sequence.');
+                }
+
+                const ignorePunctuation = options.ignorePunctuation !== false;
+                const caseSensitive = !!options.caseSensitive;
+
+                const processed = normalizeString(input, ignorePunctuation, caseSensitive);
+
+                if (processed.length === 0) {
+                    throw new Error('Input contains no valid characters for evaluation.');
+                }
+
+                const reversed = reverseString(processed);
+                const isPalindrome = processed === reversed;
+
+                return {
+                    original: input,
+                    processed: processed,
+                    reversed: reversed,
+                    isPalindrome: isPalindrome,
+                    length: processed.length
+                };
+            }
+
+            // Public interface
+            return {
+                check: function(input, options) {
+                    try {
+                        checkCounter++;
+                        lastExecution = new Date();
+                        return evaluateInput(input, options);
+                    } catch (err) {
+                        throw err;
+                    }
+                },
+                getMetrics: function() {
+                    return {
+                        count: checkCounter,
+                        lastTime: lastExecution ? lastExecution.toLocaleTimeString() : 'N/A'
+                    };
+                }
+            };
+        })();
+
+        // ============================================
+        // UI HANDLERS & EVENT LOGIC
+        // ============================================
+        function handleCheck() {
+            const textVal = document.getElementById('textInput').value.trim();
+            const numVal = document.getElementById('numberInput').value.trim();
+            const ignorePunctuation = document.getElementById('optIgnorePunctuation').checked;
+            const caseSensitive = document.getElementById('optCaseSensitive').checked;
+
+            const options = { ignorePunctuation, caseSensitive };
+
+            const errorBox = document.getElementById('errorBox');
+            const infoBox = document.getElementById('infoBox');
+            const emptyState = document.getElementById('emptyState');
+            const statusBadge = document.getElementById('liveStatusBadge');
+
+            // Reset notices & cards
+            errorBox.style.display = 'none';
+            infoBox.style.display = 'none';
+            document.getElementById('textResultCard').classList.remove('show');
+            document.getElementById('numberResultCard').classList.remove('show');
+
+            try {
+                if (!textVal && !numVal) {
+                    throw new Error('Please enter text or a number sequence on the left.');
+                }
+
+                let successCount = 0;
+
+                // Process Text Input
+                if (textVal) {
+                    try {
+                        const res = PalindromeChecker.check(textVal, options);
+                        renderResultCard('text', res);
+                        successCount++;
+                    } catch (err) {
+                        showError('Text Input Error: ' + err.message);
+                    }
+                }
+
+                // Process Number Input
+                if (numVal) {
+                    try {
+                        const res = PalindromeChecker.check(numVal, options);
+                        renderResultCard('number', res);
+                        successCount++;
+                    } catch (err) {
+                        showError('Sequence Input Error: ' + err.message);
+                    }
+                }
+
+                if (successCount > 0) {
+                    emptyState.style.display = 'none';
+                    statusBadge.textContent = 'Active Analysis';
+                    statusBadge.style.color = 'var(--accent-gold-dark)';
+                    
+                    const metrics = PalindromeChecker.getMetrics();
+                    showInfo(`✓ Analysis complete. Checks performed: ${metrics.count} (${metrics.lastTime})`);
+                }
+
+            } catch (err) {
+                showError(err.message);
+            }
+        }
+
+        // Render card results and visual character bubbles
+        function renderResultCard(prefix, res) {
+            const card = document.getElementById(`${prefix}ResultCard`);
+            
+            document.getElementById(`${prefix}Original`).textContent = res.original;
+            document.getElementById(`${prefix}Processed`).textContent = res.processed;
+            document.getElementById(`${prefix}Reversed`).textContent = res.reversed;
+            document.getElementById(`${prefix}Length`).textContent = res.length;
+
+            const badgeElem = document.getElementById(`${prefix}Badge`);
+            if (res.isPalindrome) {
+                badgeElem.className = 'status-badge badge-success';
+                badgeElem.textContent = '✓ Palindrome';
+                card.className = 'result-card show is-palindrome';
+            } else {
+                badgeElem.className = 'status-badge badge-danger';
+                badgeElem.textContent = '✕ Not Palindrome';
+                card.className = 'result-card show not-palindrome';
+            }
+
+            // Render character alignment bubbles
+            const bubblesContainer = document.getElementById(`${prefix}CharBubbles`);
+            bubblesContainer.innerHTML = '';
+
+            const arr = res.processed.split('');
+            const revArr = res.reversed.split('');
+
+            arr.forEach((char, idx) => {
+                const bubble = document.createElement('span');
+                const isMatch = char === revArr[idx];
+                bubble.className = `char-bubble ${isMatch ? 'match' : 'mismatch'}`;
+                bubble.textContent = char;
+                bubble.title = `Char ${idx + 1}: ${char} vs ${revArr[idx]}`;
+                bubblesContainer.appendChild(bubble);
+            });
+        }
+
+        function loadPreset(text, number) {
+            document.getElementById('textInput').value = text;
+            document.getElementById('numberInput').value = number;
+            handleCheck();
+        }
+
+        function showError(msg) {
+            const box = document.getElementById('errorBox');
+            box.textContent = '⚠️ ' + msg;
+            box.style.display = 'block';
+            document.getElementById('emptyState').style.display = 'none';
+        }
+
+        function showInfo(msg) {
+            const box = document.getElementById('infoBox');
+            box.textContent = msg;
+            box.style.display = 'block';
+        }
+
+        function clearAll() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('numberInput').value = '';
+            document.getElementById('errorBox').style.display = 'none';
+            document.getElementById('infoBox').style.display = 'none';
+            document.getElementById('textResultCard').classList.remove('show');
+            document.getElementById('numberResultCard').classList.remove('show');
+            document.getElementById('emptyState').style.display = 'flex';
+            const statusBadge = document.getElementById('liveStatusBadge');
+            statusBadge.textContent = 'Ready';
+            statusBadge.style.color = 'var(--text-light)';
+        }
+    </script>
+</body>
+</html>
