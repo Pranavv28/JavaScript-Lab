@@ -1,0 +1,98 @@
+[
+  {
+    "prn": "PRN2024001",
+    "studentName": "Pranav Lakhe",
+    "department": "Computer Engineering",
+    "year": "Third Year (TE)",
+    "eventName": "AI & ML Hackathon 2026",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024002",
+    "studentName": "Aswin Buni",
+    "department": "Information Technology",
+    "year": "Third Year (TE)",
+    "eventName": "WebDev CodeSprint",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024003",
+    "studentName": "Anish Singh",
+    "department": "Data Science",
+    "year": "Final Year (BE)",
+    "eventName": "Cyber Security Workshop",
+    "registrationStatus": "Pending"
+  },
+  {
+    "prn": "PRN2024004",
+    "studentName": "Aarav Sharma",
+    "department": "Computer Engineering",
+    "year": "Second Year (SE)",
+    "eventName": "Robotics Expo",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024005",
+    "studentName": "Priya Patil",
+    "department": "Electronics & Telecom",
+    "year": "Third Year (TE)",
+    "eventName": "AI & ML Hackathon 2026",
+    "registrationStatus": "Cancelled"
+  },
+  {
+    "prn": "PRN2024006",
+    "studentName": "Rahul Verma",
+    "department": "Mechanical Engineering",
+    "year": "First Year (FE)",
+    "eventName": "CAD Modelling Contest",
+    "registrationStatus": "Pending"
+  },
+  {
+    "prn": "PRN2024007",
+    "studentName": "Sneha Deshmukh",
+    "department": "Information Technology",
+    "year": "Final Year (BE)",
+    "eventName": "WebDev CodeSprint",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024008",
+    "studentName": "Aditya Kulkarni",
+    "department": "Computer Engineering",
+    "year": "Second Year (SE)",
+    "eventName": "Tech Quiz 2026",
+    "registrationStatus": "Cancelled"
+  },
+  {
+    "prn": "PRN2024009",
+    "studentName": "Neha Joshi",
+    "department": "Data Science",
+    "year": "Third Year (TE)",
+    "eventName": "Data Analytics Summit",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024010",
+    "studentName": "Rohan Mehta",
+    "department": "Electronics & Telecom",
+    "year": "First Year (FE)",
+    "eventName": "Circuit Bug Hunt",
+    "registrationStatus": "Pending"
+  },
+  {
+    "prn": "PRN2024011",
+    "studentName": "Ananya Iyer",
+    "department": "Information Technology",
+    "year": "Second Year (SE)",
+    "eventName": "UI/UX Designathon",
+    "registrationStatus": "Registered"
+  },
+  {
+    "prn": "PRN2024012",
+    "studentName": "Vikram Singh",
+    "department": "Mechanical Engineering",
+    "year": "Final Year (BE)",
+    "eventName": "Robotics Expo",
+    "registrationStatus": "Cancelled"
+  }
+]
