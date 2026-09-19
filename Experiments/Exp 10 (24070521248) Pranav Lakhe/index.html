@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Information — Exp 10 (fetch & $.getJSON)</title>
+    <meta name="description" content="Experiment 10: Loading and displaying student JSON data using fetch() and jQuery $.getJSON().">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <style>
+        :root {
+            --bg-base: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-surface-elevated: #334155;
+            --bg-input: #0f172a;
+            --border-subtle: #334155;
+            --border-hover: #475569;
+            --border-focus: #38bdf8;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #38bdf8;
+            --accent-indigo: #818cf8;
+            --accent-emerald: #34d399;
+            --accent-amber: #fbbf24;
+            --font-main: 'Plus Jakarta Sans', sans-serif;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-card: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+            --shadow-glow-blue: 0 0 25px rgba(56, 189, 248, 0.2);
+            --shadow-glow-indigo: 0 0 25px rgba(129, 140, 248, 0.2);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f8fafc;
+            --bg-surface: #ffffff;
+            --bg-surface-elevated: #f1f5f9;
+            --bg-input: #ffffff;
+            --border-subtle: #cbd5e1;
+            --border-hover: #94a3b8;
+            --border-focus: #0284c7;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --accent-blue: #0284c7;
+            --accent-indigo: #4f46e5;
+            --accent-emerald: #059669;
+            --accent-amber: #d97706;
+            --shadow-card: 0 16px 36px -8px rgba(15, 23, 42, 0.08);
+            --shadow-glow-blue: 0 0 25px rgba(2, 132, 199, 0.15);
+            --shadow-glow-indigo: 0 0 25px rgba(79, 70, 229, 0.15);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 32px 16px;
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image: 
+                radial-gradient(circle at 15% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, rgba(129, 140, 248, 0.07) 0%, transparent 45%);
+            background-attachment: fixed;
+        }
+
+        .layout {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Header & Identity */
+        header.top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 16px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 20px 28px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .identity-group {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-indigo));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-weight: 800;
+            font-family: var(--font-display);
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(56, 189, 248, 0.3);
+        }
+
+        .student-info h2 {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .student-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .experiment-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            padding: 6px 14px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--border-hover);
+            transform: scale(1.05);
+        }
+
+        /* Hero / Main Title Card */
+        .hero {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 32px 28px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-indigo), var(--accent-emerald));
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(1.8rem, 4vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .hero-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            max-width: 840px;
+            margin-bottom: 24px;
+        }
+
+        /* Buttons matching the lab prompt */
+        .trigger-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+        }
+
+        .btn-fetch {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            height: 46px;
+            padding: 0 24px;
+            border-radius: var(--radius-md);
+            font-family: var(--font-main);
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-fetch-vanilla {
+            background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(2, 132, 199, 0.3);
+        }
+
+        .btn-fetch-vanilla:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-blue);
+        }
+
+        .btn-fetch-jquery {
+            background: linear-gradient(135deg, #4f46e5 0%, #4338ca 100%);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.3);
+        }
+
+        .btn-fetch-jquery:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-glow-indigo);
+        }
+
+        .btn-clear {
+            height: 46px;
+            padding: 0 20px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-clear:hover {
+            color: var(--text-primary);
+            border-color: var(--border-hover);
+        }
+
+        /* Status Ticker */
+        .status-banner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+            padding: 12px 18px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            font-size: 13px;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+        }
+
+        .status-pill.active-fetch {
+            color: var(--accent-blue);
+        }
+
+        .status-pill.active-jquery {
+            color: var(--accent-indigo);
+        }
+
+        .status-pill.idle {
+            color: var(--text-muted);
+        }
+
+        .latency-badge {
+            font-family: var(--font-mono);
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: var(--bg-surface-elevated);
+            border: 1px solid var(--border-subtle);
+            color: var(--accent-emerald);
+        }
+
+        /* Metrics Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            color: var(--text-secondary);
+        }
+
+        .stat-value {
+            font-family: var(--font-display);
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .stat-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Main Data Card */
+        .data-section {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* Search & Filter Bar */
+        .controls-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            position: relative;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 42px;
+            padding: 0 14px 0 38px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .search-box input:focus {
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            pointer-events: none;
+        }
+
+        .filters-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        select.filter-select {
+            height: 42px;
+            padding: 0 14px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            color: var(--text-primary);
+            font-family: var(--font-main);
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+
+        select.filter-select:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* Table Styling */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        table.data-table th {
+            background: var(--bg-surface-elevated);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+
+        table.data-table td {
+            padding: 14px 18px;
+            border-bottom: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            vertical-align: middle;
+        }
+
+        table.data-table tbody tr {
+            transition: background-color 0.15s ease;
+        }
+
+        table.data-table tbody tr:hover {
+            background-color: var(--bg-surface-elevated);
+        }
+
+        table.data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-id {
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--accent-blue);
+            background: rgba(56, 189, 248, 0.12);
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .email-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            transition: color 0.2s ease;
+        }
+
+        .email-link:hover {
+            color: var(--accent-blue);
+            text-decoration: underline;
+        }
+
+        .badge-grade {
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            display: inline-block;
+        }
+
+        .grade-a {
+            background: rgba(52, 211, 153, 0.15);
+            color: var(--accent-emerald);
+        }
+
+        .grade-b {
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        .grade-c {
+            background: rgba(251, 191, 36, 0.15);
+            color: var(--accent-amber);
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 48px 24px;
+            text-align: center;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* Code Drawer */
+        .code-drawer {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 24px;
+            box-shadow: var(--shadow-card);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .code-header h3 {
+            font-family: var(--font-display);
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 6px;
+            background: var(--bg-input);
+            padding: 4px;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-subtle);
+        }
+
+        .tab-btn {
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: var(--font-main);
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--bg-surface-elevated);
+            color: var(--text-primary);
+        }
+
+        pre.code-block {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            overflow-x: auto;
+            font-family: var(--font-mono);
+            font-size: 13px;
+            color: var(--accent-blue);
+            line-height: 1.6;
+        }
+
+        footer {
+            text-align: center;
+            padding: 16px;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        footer a {
+            color: var(--accent-blue);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="layout">
+
+        <!-- Top Header & Student Identity -->
+        <header class="top-bar">
+            <div class="identity-group">
+                <div class="avatar">PL</div>
+                <div class="student-info">
+                    <h2>Pranav Lakhe</h2>
+                    <p>PRN: 24070521248</p>
+                </div>
+            </div>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="experiment-badge">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="12" y1="8" x2="12" y2="12"></line>
+                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                    </svg>
+                    <span>Experiment 10</span>
+                </div>
+                <button class="theme-toggle-btn" id="themeToggle" title="Toggle Light/Dark Theme">
+                    <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1 class="hero-title">Student Information</h1>
+            <p class="hero-subtitle">
+                Loading and displaying JSON data using JavaScript <code>fetch()</code> and jQuery <code>$.getJSON()</code> to present student records dynamically on a web page.
+            </p>
+
+            <div class="trigger-actions">
+                <button class="btn-fetch btn-fetch-vanilla" id="btnFetchVanilla">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    <span>Load using fetch()</span>
+                </button>
+
+                <button class="btn-fetch btn-fetch-jquery" id="btnFetchJquery">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                    </svg>
+                    <span>Load using $.getJSON()</span>
+                </button>
+
+                <button class="btn-clear" id="btnClearTable">Clear Table</button>
+            </div>
+
+            <!-- Status Ticker -->
+            <div class="status-banner">
+                <div class="status-pill idle" id="statusPill">
+                    <span id="statusDot" style="width: 8px; height: 8px; border-radius: 50%; background: currentColor; display: inline-block;"></span>
+                    <span id="statusText">Table Idle — Click "Load using fetch()" or "Load using $.getJSON()"</span>
+                </div>
+                <div class="latency-badge" id="latencyBadge" style="display: none;">Latency: 0ms</div>
+            </div>
+        </section>
+
+        <!-- Student Data Section -->
+        <section class="data-section">
+            <div class="controls-bar">
+                <div class="search-box">
+                    <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search by name, ID, email, or course..." disabled>
+                </div>
+
+                <div class="filters-group">
+                    <select class="filter-select" id="courseFilter" disabled>
+                        <option value="ALL">All Courses / Semesters</option>
+                        <option value="Sem 5">Sem 5</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Data Science">Data Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                    </select>
+
+                    <select class="filter-select" id="sortSelect" disabled>
+                        <option value="DEFAULT">Sort: Default</option>
+                        <option value="ID_ASC">ID: Low to High</option>
+                        <option value="MARKS_DESC">Marks: High to Low</option>
+                        <option value="NAME_ASC">Name: A to Z</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Course</th>
+                            <th>Marks (%)</th>
+                            <th>Grade</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentTableBody">
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                        <polyline points="14 2 14 8 20 8"></polyline>
+                                        <line x1="16" y1="13" x2="8" y2="13"></line>
+                                        <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    </svg>
+                                    <p>No student data loaded yet. Click <strong>"Load using fetch()"</strong> or <strong>"Load using $.getJSON()"</strong> above.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Code Inspection Drawer -->
+        <section class="code-drawer">
+            <div class="code-header">
+                <h3>Implementation Code Inspector</h3>
+                <div class="tab-buttons">
+                    <button class="tab-btn active" id="tabFetchBtn">fetch() Method</button>
+                    <button class="tab-btn" id="tabJqueryBtn">jQuery $.getJSON() Method</button>
+                </div>
+            </div>
+            <pre class="code-block" id="codeDisplay">// Click tab above to view JavaScript implementation details</pre>
+        </section>
+
+        <footer>
+            JS Lab Experiment 10 — Built by <strong>Pranav Lakhe</strong> (24070521248) | <a href="../index.html">&larr; Return to Lab Portal</a>
+        </footer>
+
+    </div>
+
+    <!-- JavaScript Implementation Logic -->
+    <script>
+        let rawStudentsData = [];
+        let activeMethod = null;
+
+        const fetchCodeSnippet = `// Method A: Using Vanilla JavaScript fetch() API
+function loadUsingFetch() {
+    fetch('students.json')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(\`HTTP error! status: \${response.status}\`);
+            }
+            return response.json();
+        })
+        .then(data => {
+            renderTable(data);
+            updateMetrics(data);
+        })
+        .catch(error => console.error('Fetch error:', error));
+}`;
+
+        const jqueryCodeSnippet = `// Method B: Using jQuery $.getJSON() API
+function loadUsingJQuery() {
+    $.getJSON('students.json', function(data) {
+        renderTable(data);
+        updateMetrics(data);
+    }).fail(function(jqxhr, textStatus, error) {
+        console.error('jQuery $.getJSON error:', textStatus, error);
+    });
+}`;
+
+        // DOM elements
+        const studentTableBody = document.getElementById('studentTableBody');
+        const btnFetchVanilla = document.getElementById('btnFetchVanilla');
+        const btnFetchJquery = document.getElementById('btnFetchJquery');
+        const btnClearTable = document.getElementById('btnClearTable');
+        const statusPill = document.getElementById('statusPill');
+        const statusText = document.getElementById('statusText');
+        const latencyBadge = document.getElementById('latencyBadge');
+        
+        const searchInput = document.getElementById('searchInput');
+        const courseFilter = document.getElementById('courseFilter');
+        const sortSelect = document.getElementById('sortSelect');
+
+        const codeDisplay = document.getElementById('codeDisplay');
+        const tabFetchBtn = document.getElementById('tabFetchBtn');
+        const tabJqueryBtn = document.getElementById('tabJqueryBtn');
+
+        codeDisplay.textContent = fetchCodeSnippet;
+
+        tabFetchBtn.addEventListener('click', () => {
+            tabFetchBtn.classList.add('active');
+            tabJqueryBtn.classList.remove('active');
+            codeDisplay.textContent = fetchCodeSnippet;
+        });
+
+        tabJqueryBtn.addEventListener('click', () => {
+            tabJqueryBtn.classList.add('active');
+            tabFetchBtn.classList.remove('active');
+            codeDisplay.textContent = jqueryCodeSnippet;
+        });
+
+        // Dynamic Table Rendering Function
+        function renderTable(data) {
+            if (!data || data.length === 0) {
+                studentTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7">
+                            <div class="empty-state">
+                                <p>No matching student records found.</p>
+                            </div>
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            let rowsHTML = '';
+            data.forEach(student => {
+                let gradeClass = 'grade-a';
+                if (student.marks < 75 && student.marks >= 60) gradeClass = 'grade-b';
+                if (student.marks < 60) gradeClass = 'grade-c';
+
+                rowsHTML += `
+                    <tr>
+                        <td><span class="badge-id">${student.id}</span></td>
+                        <td><strong>${student.name}</strong></td>
+                        <td><a href="mailto:${student.email}" class="email-link">${student.email}</a></td>
+                        <td>${student.course}</td>
+                        <td><strong>${student.marks}%</strong></td>
+                        <td><span class="badge-grade ${gradeClass}">${student.grade}</span></td>
+                        <td>
+                            <span style="color: var(--accent-emerald); font-weight: 600;">
+                                &#10003; ${student.status}
+                            </span>
+                        </td>
+                    </tr>`;
+            });
+
+            studentTableBody.innerHTML = rowsHTML;
+        }
+
+        function setControlsState(enabled) {
+            searchInput.disabled = !enabled;
+            courseFilter.disabled = !enabled;
+            sortSelect.disabled = !enabled;
+        }
+
+        // Method A: fetch()
+        btnFetchVanilla.addEventListener('click', () => {
+            const t0 = performance.now();
+
+            fetch('students.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('HTTP error ' + response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    const t1 = performance.now();
+                    const latency = (t1 - t0).toFixed(2);
+                    
+                    rawStudentsData = data;
+                    activeMethod = 'fetch()';
+
+                    applyFilters();
+                    setControlsState(true);
+
+                    statusPill.className = 'status-pill active-fetch';
+                    statusText.textContent = `Successfully loaded ${data.length} records using fetch() API`;
+                    latencyBadge.style.display = 'inline-block';
+                    latencyBadge.textContent = `Latency: ${latency} ms`;
+                })
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    statusPill.className = 'status-pill idle';
+                    statusText.textContent = `Error loading JSON: ${err.message}`;
+                });
+        });
+
+        // Method B: jQuery $.getJSON()
+        btnFetchJquery.addEventListener('click', () => {
+            const t0 = performance.now();
+
+            $.getJSON('students.json', function(data) {
+                const t1 = performance.now();
+                const latency = (t1 - t0).toFixed(2);
+
+                rawStudentsData = data;
+                activeMethod = '$.getJSON()';
+
+                applyFilters();
+                setControlsState(true);
+
+                statusPill.className = 'status-pill active-jquery';
+                statusText.textContent = `Successfully loaded ${data.length} records using jQuery $.getJSON()`;
+                latencyBadge.style.display = 'inline-block';
+                latencyBadge.textContent = `Latency: ${latency} ms`;
+            }).fail(function(jqxhr, textStatus, error) {
+                console.error('$.getJSON error:', textStatus, error);
+                statusPill.className = 'status-pill idle';
+                statusText.textContent = `jQuery $.getJSON error: ${error || textStatus}`;
+            });
+        });
+
+        // Clear Table
+        btnClearTable.addEventListener('click', () => {
+            rawStudentsData = [];
+            activeMethod = null;
+
+            studentTableBody.innerHTML = `
+                <tr>
+                    <td colspan="7">
+                        <div class="empty-state">
+                            <p>Table cleared. Click "Load using fetch()" or "Load using $.getJSON()" to reload.</p>
+                        </div>
+                    </td>
+                </tr>`;
+
+            setControlsState(false);
+            searchInput.value = '';
+            courseFilter.value = 'ALL';
+            sortSelect.value = 'DEFAULT';
+
+            statusPill.className = 'status-pill idle';
+            statusText.textContent = 'Table Cleared';
+            latencyBadge.style.display = 'none';
+        });
+
+        // Search & Filter Logic
+        function applyFilters() {
+            if (rawStudentsData.length === 0) return;
+
+            const query = searchInput.value.toLowerCase().trim();
+            const selectedCourse = courseFilter.value;
+            const sortMode = sortSelect.value;
+
+            let result = rawStudentsData.filter(student => {
+                const matchesQuery = student.name.toLowerCase().includes(query) || 
+                                     student.email.toLowerCase().includes(query) ||
+                                     student.course.toLowerCase().includes(query) ||
+                                     String(student.id).includes(query);
+
+                const matchesCourse = selectedCourse === 'ALL' || student.course === selectedCourse;
+
+                return matchesQuery && matchesCourse;
+            });
+
+            if (sortMode === 'MARKS_DESC') {
+                result.sort((a, b) => b.marks - a.marks);
+            } else if (sortMode === 'ID_ASC') {
+                result.sort((a, b) => a.id - b.id);
+            } else if (sortMode === 'NAME_ASC') {
+                result.sort((a, b) => a.name.localeCompare(b.name));
+            }
+
+            renderTable(result);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        courseFilter.addEventListener('change', applyFilters);
+        sortSelect.addEventListener('change', applyFilters);
+
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        let isDark = true;
+
+        themeToggle.addEventListener('click', () => {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            
+            themeIcon.innerHTML = isDark ? 
+                '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>' :
+                '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+        });
+    </script>
+</body>
+</html>

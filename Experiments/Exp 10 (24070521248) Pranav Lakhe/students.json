@@ -1,0 +1,119 @@
+[
+  {
+    "id": 101,
+    "name": "Pranav Lakhe",
+    "email": "pranav.lakhe@example.com",
+    "course": "Sem 5",
+    "marks": 98,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 102,
+    "name": "Aswin Buni",
+    "email": "aswin.buni@example.com",
+    "course": "Sem 5",
+    "marks": 96,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 103,
+    "name": "Anish Singh",
+    "email": "anish.singh@example.com",
+    "course": "Sem 5",
+    "marks": 94,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 104,
+    "name": "Aarav Sharma",
+    "email": "aarav.sharma@example.com",
+    "course": "Sem 5",
+    "marks": 91,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 105,
+    "name": "Priya Patil",
+    "email": "priya.patil@example.com",
+    "course": "Sem 5",
+    "marks": 89,
+    "grade": "A",
+    "status": "Pass"
+  },
+  {
+    "id": 106,
+    "name": "Rahul Verma",
+    "email": "rahul.verma@example.com",
+    "course": "Sem 5",
+    "marks": 76,
+    "grade": "B+",
+    "status": "Pass"
+  },
+  {
+    "id": 107,
+    "name": "Sneha Deshmukh",
+    "email": "sneha.deshmukh@example.com",
+    "course": "Sem 5",
+    "marks": 97,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 108,
+    "name": "Aditya Kulkarni",
+    "email": "aditya.kulkarni@example.com",
+    "course": "Sem 5",
+    "marks": 88,
+    "grade": "A",
+    "status": "Pass"
+  },
+  {
+    "id": 109,
+    "name": "Neha Joshi",
+    "email": "neha.joshi@example.com",
+    "course": "Sem 5",
+    "marks": 95,
+    "grade": "A+",
+    "status": "Pass"
+  },
+  {
+    "id": 110,
+    "name": "Rohan Mehta",
+    "email": "rohan.mehta@example.com",
+    "course": "Sem 5",
+    "marks": 84,
+    "grade": "A",
+    "status": "Pass"
+  },
+  {
+    "id": 111,
+    "name": "Ananya Iyer",
+    "email": "ananya.iyer@example.com",
+    "course": "Sem 5",
+    "marks": 73,
+    "grade": "B",
+    "status": "Pass"
+  },
+  {
+    "id": 112,
+    "name": "Vikram Singh",
+    "email": "vikram.singh@example.com",
+    "course": "Sem 5",
+    "marks": 62,
+    "grade": "C+",
+    "status": "Pass"
+  },
+  {
+    "id": 113,
+    "name": "Tanvi Nair",
+    "email": "tanvi.nair@example.com",
+    "course": "Sem 5",
+    "marks": 89,
+    "grade": "A",
+    "status": "Pass"
+  }
+]
