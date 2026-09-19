@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Online Job Application — Case Study 8</title>
+    <meta name="description" content="Case Study 8: Enterprise Online Job Application Portal with real-time field validation and interactive responsive UI.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Outfit:wght@500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #090d16;
+            --bg-card: rgba(18, 24, 38, 0.75);
+            --bg-input: rgba(13, 18, 30, 0.7);
+            --bg-input-focus: rgba(17, 24, 39, 0.95);
+            --border-subtle: rgba(255, 255, 255, 0.1);
+            --border-focus: #3b82f6;
+            --border-error: #ef4444;
+            --border-success: #10b981;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-blue: #3b82f6;
+            --accent-indigo: #6366f1;
+            --accent-cyan: #06b6d4;
+            --accent-emerald: #10b981;
+            --accent-gradient: linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #06b6d4 100%);
+            --accent-glow: rgba(59, 130, 246, 0.35);
+            --error-glow: rgba(239, 68, 68, 0.25);
+            --font-main: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-heading: 'Outfit', sans-serif;
+            --font-mono: 'Fira Code', monospace;
+            --radius-md: 12px;
+            --radius-lg: 20px;
+            --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 30px rgba(59, 130, 246, 0.12);
+        }
+
+        [data-theme="light"] {
+            --bg-base: #f1f5f9;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --bg-input: #f8fafc;
+            --bg-input-focus: #ffffff;
+            --border-subtle: #cbd5e1;
+            --border-focus: #2563eb;
+            --border-error: #dc2626;
+            --border-success: #059669;
+            --text-primary: #0f172a;
+            --text-secondary: #475569;
+            --text-muted: #64748b;
+            --shadow-card: 0 20px 40px -15px rgba(15, 23, 42, 0.08), 0 0 20px rgba(37, 99, 235, 0.08);
+        }
+
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background-color: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 32px 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1.5;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Orbs */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.35;
+            animation: orbFloat 16s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .orb-1 {
+            width: 500px;
+            height: 500px;
+            background: var(--accent-blue);
+            top: -120px;
+            left: -120px;
+        }
+
+        .orb-2 {
+            width: 450px;
+            height: 450px;
+            background: var(--accent-indigo);
+            bottom: -100px;
+            right: -100px;
+            animation-delay: -8s;
+        }
+
+        @keyframes orbFloat {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(70px, 50px) scale(1.1); }
+        }
+
+        /* Top Header Navbar */
+        .top-navbar {
+            width: 100%;
+            max-width: 860px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding: 14px 24px;
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+        }
+
+        .identity-badge {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .avatar-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-family: var(--font-heading);
+            font-weight: 800;
+            font-size: 15px;
+            box-shadow: 0 4px 14px rgba(59, 130, 246, 0.4);
+        }
+
+        .user-details h3 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1.2;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-family: var(--font-mono);
+        }
+
+        .theme-toggle-btn {
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            color: var(--text-primary);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .theme-toggle-btn:hover {
+            border-color: var(--border-focus);
+            transform: scale(1.08);
+        }
+
+        /* Main Container Card */
+        .container {
+            width: 100%;
+            max-width: 860px;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-lg);
+            padding: 36px;
+            box-shadow: var(--shadow-card);
+            transition: all 0.3s ease;
+        }
+
+        .header-title-block {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 14px;
+            background: rgba(59, 130, 246, 0.12);
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--accent-blue);
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-family: var(--font-heading);
+            font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: var(--bg-input);
+            border-radius: 3px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            border: 1px solid var(--border-subtle);
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--accent-gradient);
+            transition: width 0.3s ease;
+        }
+
+        /* Success Message Styling */
+        .success-message {
+            display: none;
+            padding: 20px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--accent-emerald);
+            border-radius: var(--radius-md);
+            margin-bottom: 28px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 15px;
+            backdrop-filter: blur(8px);
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fieldset & Sections */
+        fieldset {
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 28px;
+            background: rgba(13, 18, 30, 0.3);
+            transition: border-color 0.2s ease;
+        }
+
+        fieldset:focus-within {
+            border-color: rgba(59, 130, 246, 0.4);
+        }
+
+        legend {
+            font-family: var(--font-heading);
+            font-weight: 700;
+            font-size: 15px;
+            padding: 0 12px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            letter-spacing: 0.01em;
+        }
+
+        /* Form Layout Grids */
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .form-grid-3 {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .form-grid-2, .form-grid-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            position: relative;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-muted);
+            pointer-events: none;
+            transition: color 0.2s ease;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px 14px 10px 42px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            font-family: var(--font-main);
+            font-size: 14px;
+            color: var(--text-primary);
+            outline: none;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            padding-left: 14px;
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 14px;
+            cursor: pointer;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            background: var(--bg-input-focus);
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .input-wrapper:focus-within .input-icon {
+            color: var(--border-focus);
+        }
+
+        /* Radio Buttons Group */
+        .radio-group {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            margin-top: 4px;
+        }
+
+        .radio-card {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--bg-input);
+            border: 1px solid var(--border-subtle);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+        }
+
+        .radio-card:hover {
+            border-color: var(--border-focus);
+        }
+
+        .radio-card input[type="radio"] {
+            appearance: none;
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border: 1px solid var(--border-subtle);
+            border-radius: 50%;
+            outline: none;
+            cursor: pointer;
+            display: grid;
+            place-content: center;
+            transition: all 0.2s ease;
+            margin: 0;
+            padding: 0;
+        }
+
+        .radio-card input[type="radio"]::before {
+            content: "";
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: 120ms transform ease-in-out;
+            background-color: var(--accent-blue);
+        }
+
+        .radio-card input[type="radio"]:checked {
+            border-color: var(--accent-blue);
+        }
+
+        .radio-card input[type="radio"]:checked::before {
+            transform: scale(1);
+        }
+
+        .radio-card label {
+            margin: 0;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        /* Validation Error Messaging */
+        .error {
+            color: #ef4444;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+            align-items: center;
+            gap: 4px;
+            font-weight: 500;
+        }
+
+        .invalid input, .invalid select, .invalid textarea {
+            border-color: var(--border-error) !important;
+            box-shadow: 0 0 0 3px var(--error-glow) !important;
+        }
+
+        .invalid .error {
+            display: flex;
+        }
+
+        /* Submit Button */
+        button[type="submit"] {
+            width: 100%;
+            height: 52px;
+            background: var(--accent-gradient);
+            color: white;
+            font-family: var(--font-heading);
+            font-size: 16px;
+            font-weight: 700;
+            border: none;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 18px rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        button[type="submit"]:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 26px rgba(59, 130, 246, 0.5);
+        }
+
+        button[type="submit"]:active {
+            transform: translateY(0);
+        }
+
+        footer {
+            margin-top: 24px;
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+    </div>
+
+    <!-- Top Identity Bar -->
+    <header class="top-navbar">
+        <div class="identity-badge">
+            <div class="avatar-circle">PL</div>
+            <div class="user-details">
+                <h3>Pranav Lakhe</h3>
+                <p>PRN: 24070521248 • Case Study 8</p>
+            </div>
+        </div>
+        <button class="theme-toggle-btn" id="themeToggle" title="Toggle Light/Dark Theme">
+            <svg id="themeIcon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <div class="container">
+        <div class="header-title-block">
+            <div class="header-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                </svg>
+                Careers Portal
+            </div>
+            <h1>Online Job Application Form</h1>
+            <p class="header-subtitle">Join our team! Complete the application below to get started.</p>
+        </div>
+
+        <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="progressBar"></div>
+        </div>
+        
+        <div id="successMsg" class="success-message">
+            🎉 Application submitted successfully! Our talent acquisition team will review your application soon.
+        </div>
+
+        <form id="jobAppForm" novalidate>
+            
+            <!-- 1. Personal Information -->
+            <fieldset>
+                <legend>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    Personal Information
+                </legend>
+                
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-fullName">
+                        <label for="fullName">Full Name *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                <circle cx="12" cy="7" r="4"></circle>
+                            </svg>
+                            <input type="text" id="fullName" placeholder="John Doe">
+                        </div>
+                        <span class="error">Please enter your full name.</span>
+                    </div>
+
+                    <div class="form-group" id="group-dob">
+                        <label for="dob">Date of Birth *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <input type="date" id="dob">
+                        </div>
+                        <span class="error">Please select a valid date of birth.</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="group-gender">
+                    <label>Gender *</label>
+                    <div class="radio-group">
+                        <div class="radio-card">
+                            <input type="radio" id="genderMale" name="gender" value="Male">
+                            <label for="genderMale">Male</label>
+                        </div>
+                        <div class="radio-card">
+                            <input type="radio" id="genderFemale" name="gender" value="Female">
+                            <label for="genderFemale">Female</label>
+                        </div>
+                        <div class="radio-card">
+                            <input type="radio" id="genderOther" name="gender" value="Other">
+                            <label for="genderOther">Other</label>
+                        </div>
+                    </div>
+                    <span class="error">Please select your gender.</span>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-email">
+                        <label for="email">Email Address *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+                                <polyline points="22,6 12,13 2,6"></polyline>
+                            </svg>
+                            <input type="email" id="email" placeholder="example@email.com">
+                        </div>
+                        <span class="error">Please enter a valid email address.</span>
+                    </div>
+
+                    <div class="form-group" id="group-mobile">
+                        <label for="mobile">Mobile Number *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                            <input type="text" id="mobile" placeholder="10-digit phone number">
+                        </div>
+                        <span class="error">Please enter a valid 10-digit mobile number.</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="group-address">
+                    <label for="address">Address *</label>
+                    <textarea id="address" rows="2" placeholder="Street Address"></textarea>
+                    <span class="error">Please enter your address.</span>
+                </div>
+
+                <div class="form-group" id="group-location">
+                    <label for="location">City / State / PIN Code *</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                            <circle cx="12" cy="10" r="3"></circle>
+                        </svg>
+                        <input type="text" id="location" placeholder="e.g., New York, NY, 10001">
+                    </div>
+                    <span class="error">Please enter City, State, and PIN Code.</span>
+                </div>
+            </fieldset>
+
+            <!-- 2. Educational Qualification -->
+            <fieldset>
+                <legend>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+                    </svg>
+                    Educational Qualification
+                </legend>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-highestQual">
+                        <label for="highestQual">Highest Qualification *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                            </svg>
+                            <select id="highestQual">
+                                <option value="">Select Qualification</option>
+                                <option value="High School">High School</option>
+                                <option value="Associate Degree">Associate Degree</option>
+                                <option value="Bachelor's Degree">Bachelor's Degree</option>
+                                <option value="Master's Degree">Master's Degree</option>
+                                <option value="Doctorate">Doctorate</option>
+                            </select>
+                        </div>
+                        <span class="error">Please select your highest qualification.</span>
+                    </div>
+
+                    <div class="form-group" id="group-institute">
+                        <label for="institute">University / Institute *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 21h18M3 7v14M21 7v14M6 21V10M18 21V10M12 21V3"></path>
+                            </svg>
+                            <input type="text" id="institute" placeholder="Name of University or College">
+                        </div>
+                        <span class="error">Please enter your University/Institute name.</span>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-passingYear">
+                        <label for="passingYear">Passing Year *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <input type="number" id="passingYear" min="1950" max="2026" placeholder="YYYY">
+                        </div>
+                        <span class="error">Please enter a valid passing year (1950 - 2026).</span>
+                    </div>
+
+                    <div class="form-group" id="group-cgpa">
+                        <label for="cgpa">Percentage / CGPA *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="19" y1="5" x2="5" y2="19"></line>
+                                <circle cx="6.5" cy="6.5" r="2.5"></circle>
+                                <circle cx="17.5" cy="17.5" r="2.5"></circle>
+                            </svg>
+                            <input type="text" id="cgpa" placeholder="e.g., 85% or 3.8">
+                        </div>
+                        <span class="error">Please enter your Percentage or CGPA.</span>
+                    </div>
+                </div>
+            </fieldset>
+
+            <!-- 3. Professional Information -->
+            <fieldset>
+                <legend>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
+                    </svg>
+                    Professional Information
+                </legend>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-jobPosition">
+                        <label for="jobPosition">Applying For / Job Position *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                            </svg>
+                            <input type="text" id="jobPosition" placeholder="e.g., Frontend Developer">
+                        </div>
+                        <span class="error">Please state the position you are applying for.</span>
+                    </div>
+
+                    <div class="form-group" id="group-experience">
+                        <label for="experience">Total Work Experience (Years) *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <input type="number" id="experience" min="0" step="0.5" placeholder="e.g., 2.5">
+                        </div>
+                        <span class="error">Please enter your work experience (enter 0 if fresh graduate).</span>
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-organization">
+                        <label for="organization">Current / Previous Organization *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"></path>
+                                <path d="M6 12H4a2 2 0 0 0-2 2v8h20v-8a2 2 0 0 0-2-2h-2"></path>
+                            </svg>
+                            <input type="text" id="organization" placeholder="Company Name (or 'None')">
+                        </div>
+                        <span class="error">Please enter current or previous organization.</span>
+                    </div>
+
+                    <div class="form-group" id="group-designation">
+                        <label for="designation">Current Designation *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                            <input type="text" id="designation" placeholder="Job Title (or 'N/A')">
+                        </div>
+                        <span class="error">Please enter your current designation.</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="group-salary">
+                    <label for="salary">Expected Salary *</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="12" y1="1" x2="12" y2="23"></line>
+                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                        </svg>
+                        <input type="text" id="salary" placeholder="e.g., $60,000 / year">
+                    </div>
+                    <span class="error">Please enter your expected salary.</span>
+                </div>
+            </fieldset>
+
+            <!-- 4. Technical Skills -->
+            <fieldset>
+                <legend>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="16 18 22 12 16 6"></polyline>
+                        <polyline points="8 6 2 12 8 18"></polyline>
+                    </svg>
+                    Technical Skills
+                </legend>
+
+                <div class="form-grid-2">
+                    <div class="form-group" id="group-progLanguages">
+                        <label for="progLanguages">Programming Languages *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"></path>
+                            </svg>
+                            <input type="text" id="progLanguages" placeholder="e.g., JavaScript, Python, C++">
+                        </div>
+                        <span class="error">Please list programming languages you know.</span>
+                    </div>
+
+                    <div class="form-group" id="group-techSkills">
+                        <label for="techSkills">Technical Skills *</label>
+                        <div class="input-wrapper">
+                            <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+                            </svg>
+                            <input type="text" id="techSkills" placeholder="e.g., React, Git, SQL, AWS">
+                        </div>
+                        <span class="error">Please list your technical skills.</span>
+                    </div>
+                </div>
+
+                <div class="form-group" id="group-certifications">
+                    <label for="certifications">Certifications</label>
+                    <div class="input-wrapper">
+                        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="8" r="7"></circle>
+                            <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+                        </svg>
+                        <input type="text" id="certifications" placeholder="e.g., AWS Certified Developer (Optional)">
+                    </div>
+                </div>
+            </fieldset>
+
+            <button type="submit">
+                <span>Submit Application</span>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                </svg>
+            </button>
+        </form>
+
+        <footer>
+            JS Lab Case Study 8 — Online Job Application Portal
+        </footer>
+    </div>
+
+<script>
+    const form = document.getElementById('jobAppForm');
+    const successMsg = document.getElementById('successMsg');
+    const progressBar = document.getElementById('progressBar');
+
+    // Theme Toggle Logic
+    const themeToggleBtn = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    
+    themeToggleBtn.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', newTheme);
+        
+        if (newTheme === 'light') {
+            themeIcon.innerHTML = `<path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>`;
+        } else {
+            themeIcon.innerHTML = `<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>`;
+        }
+    });
+
+    // Form Completion Progress Counter
+    form.addEventListener('input', updateProgress);
+    form.addEventListener('change', updateProgress);
+
+    function updateProgress() {
+        const requiredInputs = form.querySelectorAll('input[type="text"], input[type="email"], input[type="number"], input[type="date"], select, textarea');
+        let filledCount = 0;
+        requiredInputs.forEach(input => {
+            if (input.value.trim() !== '') filledCount++;
+        });
+        if (document.querySelector('input[name="gender"]:checked')) filledCount++;
+
+        const totalFields = requiredInputs.length + 1;
+        const percentage = Math.round((filledCount / totalFields) * 100);
+        progressBar.style.width = percentage + '%';
+    }
+
+    form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        
+        let isValid = true;
+
+        // Validation helper function
+        function validateField(groupId, fieldId, condition) {
+            const group = document.getElementById(groupId);
+            const errorElem = group.querySelector('.error');
+
+            if (!condition) {
+                group.classList.add('invalid');
+                if (errorElem) errorElem.style.display = 'flex';
+                isValid = false;
+            } else {
+                group.classList.remove('invalid');
+                if (errorElem) errorElem.style.display = 'none';
+            }
+        }
+
+        // 1. Personal Information Validation
+        const fullName = document.getElementById('fullName').value.trim();
+        validateField('group-fullName', 'fullName', fullName.length > 0);
+
+        const dob = document.getElementById('dob').value;
+        validateField('group-dob', 'dob', dob !== '');
+
+        const genderSelected = document.querySelector('input[name="gender"]:checked');
+        validateField('group-gender', 'gender', genderSelected !== null);
+
+        const email = document.getElementById('email').value.trim();
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        validateField('group-email', 'email', emailRegex.test(email));
+
+        const mobile = document.getElementById('mobile').value.trim();
+        const mobileRegex = /^[0-9]{10}$/;
+        validateField('group-mobile', 'mobile', mobileRegex.test(mobile));
+
+        const address = document.getElementById('address').value.trim();
+        validateField('group-address', 'address', address.length > 0);
+
+        const location = document.getElementById('location').value.trim();
+        validateField('group-location', 'location', location.length > 0);
+
+        // 2. Educational Qualification Validation
+        const highestQual = document.getElementById('highestQual').value;
+        validateField('group-highestQual', 'highestQual', highestQual !== '');
+
+        const institute = document.getElementById('institute').value.trim();
+        validateField('group-institute', 'institute', institute.length > 0);
+
+        const passingYear = parseInt(document.getElementById('passingYear').value, 10);
+        validateField('group-passingYear', 'passingYear', passingYear >= 1950 && passingYear <= 2026);
+
+        const cgpa = document.getElementById('cgpa').value.trim();
+        validateField('group-cgpa', 'cgpa', cgpa.length > 0);
+
+        // 3. Professional Information Validation
+        const jobPosition = document.getElementById('jobPosition').value.trim();
+        validateField('group-jobPosition', 'jobPosition', jobPosition.length > 0);
+
+        const experience = document.getElementById('experience').value;
+        validateField('group-experience', 'experience', experience !== '' && parseFloat(experience) >= 0);
+
+        const organization = document.getElementById('organization').value.trim();
+        validateField('group-organization', 'organization', organization.length > 0);
+
+        const designation = document.getElementById('designation').value.trim();
+        validateField('group-designation', 'designation', designation.length > 0);
+
+        const salary = document.getElementById('salary').value.trim();
+        validateField('group-salary', 'salary', salary.length > 0);
+
+        // 4. Technical Skills Validation
+        const progLanguages = document.getElementById('progLanguages').value.trim();
+        validateField('group-progLanguages', 'progLanguages', progLanguages.length > 0);
+
+        const techSkills = document.getElementById('techSkills').value.trim();
+        validateField('group-techSkills', 'techSkills', techSkills.length > 0);
+
+        // Submit form if valid
+        if (isValid) {
+            successMsg.style.display = 'block';
+            form.reset();
+            progressBar.style.width = '0%';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            successMsg.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
