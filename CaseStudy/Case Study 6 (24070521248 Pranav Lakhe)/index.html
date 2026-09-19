@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Case study 6</title>
+  <style>
+    :root {
+      --bg: #edf3ff;
+      --panel: #ffffff;
+      --panel-2: #f5f7ff;
+      --primary: #2f6fed;
+      --primary-dark: #1d4ec7;
+      --text: #1f2a37;
+      --muted: #5d6b82;
+      --success: #1f9d61;
+      --error: #d93d3d;
+      --border: #dfe6f5;
+      --shadow: 0 14px 35px rgba(27, 67, 150, 0.12);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #dfe9ff, #edf4ff 45%, #eaf8ff);
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0 0 20px;
+      font-size: clamp(2rem, 3vw, 3rem);
+      text-align: center;
+      color: var(--primary-dark);
+    }
+
+    .section {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+      backdrop-filter: blur(2px);
+    }
+
+    .section h2 {
+      margin: 0 0 16px;
+      font-size: 1.7rem;
+      color: #1f355d;
+    }
+
+    .section p {
+      margin-top: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    textarea, input {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 1rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    textarea:focus, input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(47, 111, 237, 0.12);
+    }
+
+    textarea {
+      min-height: 140px;
+      resize: vertical;
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease, opacity 0.2s ease;
+      background: var(--primary);
+      color: #fff;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
+    }
+
+    .secondary {
+      background: #7c8db8;
+    }
+
+    .output {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 58px;
+      line-height: 1.6;
+      color: var(--text);
+      font-size: 0.98rem;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+      margin-top: 20px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .field label {
+      font-weight: 700;
+      color: #31415f;
+    }
+
+    .field.error input {
+      border-color: var(--error);
+      background: #fff5f5;
+    }
+
+    .field.success input {
+      border-color: var(--success);
+      background: #f2fff8;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--muted);
+      min-height: 16px;
+    }
+
+    .status {
+      margin-top: 18px;
+      padding: 12px 14px;
+      border-radius: 10px;
+      font-weight: 700;
+      display: none;
+    }
+
+    .status.error {
+      display: block;
+      background: #fff1f1;
+      color: var(--error);
+      border: 1px solid #f4cbcb;
+    }
+
+    .status.success {
+      display: block;
+      background: #edfdf5;
+      color: var(--success);
+      border: 1px solid #bfead0;
+    }
+
+    @media (max-width: 640px) {
+      .container { padding: 16px; }
+      .section { padding: 18px; }
+      .buttons { flex-direction: column; }
+      button { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Case Study 6</h1>
+
+    <section class="section">
+      <h2>1. String Operations</h2>
+      <p>Use JavaScript string methods such as <strong>split()</strong>, <strong>replace()</strong>, <strong>indexOf()</strong>, and <strong>substr()</strong> to manipulate text.</p>
+
+      <textarea id="textInput">JavaScript is a powerful language used for web development. It allows us to build interactive web pages and dynamic applications.</textarea>
+
+      <div class="buttons">
+        <button id="reverseBtn">Reverse String</button>
+        <button id="vowelBtn" class="secondary">Count Vowels</button>
+        <button id="replaceBtn" class="secondary">Replace Word</button>
+      </div>
+
+      <div id="stringOutput" class="output">
+        Result appears here...
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>2. Event Handling in JavaScript</h2>
+      <p>Validate the form using various events such as <strong>focus</strong>, <strong>change</strong>, and <strong>submit</strong>.</p>
+
+      <form id="studentForm" novalidate>
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">Full Name</label>
+            <input id="name" name="name" type="text" placeholder="Enter your full name" />
+            <div class="hint" data-hint="name"></div>
+          </div>
+
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="Enter your email" />
+            <div class="hint" data-hint="email"></div>
+          </div>
+
+          <div class="field">
+            <label for="phone">Phone Number</label>
+            <input id="phone" name="phone" type="tel" placeholder="Enter 10-digit phone number" />
+            <div class="hint" data-hint="phone"></div>
+          </div>
+        </div>
+
+        <div class="buttons">
+          <button type="submit">Submit Form</button>
+        </div>
+
+        <div id="formStatus" class="status"></div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    const textInput = document.getElementById('textInput');
+    const stringOutput = document.getElementById('stringOutput');
+
+    document.getElementById('reverseBtn').addEventListener('click', () => {
+      const text = textInput.value.trim();
+      if (!text) {
+        stringOutput.textContent = 'Please enter some text first.';
+        return;
+      }
+
+      const reversed = text.split('').reverse().join('');
+      stringOutput.innerHTML = '<strong>Reversed String:</strong> ' + reversed;
+    });
+
+    document.getElementById('vowelBtn').addEventListener('click', () => {
+      const text = textInput.value.toLowerCase();
+      const vowels = text.match(/[aeiou]/g) || [];
+
+      stringOutput.innerHTML = '<strong>Vowels Found:</strong> ' + vowels.length + '<br>' +
+        '<strong>Vowel List:</strong> ' + (vowels.length ? vowels.join(', ') : 'None');
+    });
+
+    document.getElementById('replaceBtn').addEventListener('click', () => {
+      const text = textInput.value;
+      const updatedText = text.replace(/JavaScript/gi, 'JS');
+      stringOutput.innerHTML = '<strong>Updated Text:</strong><br>' + updatedText;
+    });
+
+    const form = document.getElementById('studentForm');
+    const formStatus = document.getElementById('formStatus');
+    const fieldMap = {
+      name: document.getElementById('name'),
+      email: document.getElementById('email'),
+      phone: document.getElementById('phone')
+    };
+
+    const validateName = () => {
+      const value = fieldMap.name.value.trim();
+      const field = fieldMap.name.closest('.field');
+      const hint = document.querySelector('[data-hint="name"]');
+
+      if (!value) {
+        field.classList.add('error');
+        field.classList.remove('success');
+        hint.textContent = 'Name is required.';
+        return false;
+      }
+
+      field.classList.remove('error');
+      field.classList.add('success');
+      hint.textContent = 'Looks good.';
+      return true;
+    };
+
+    const validateEmail = () => {
+      const value = fieldMap.email.value.trim();
+      const field = fieldMap.email.closest('.field');
+      const hint = document.querySelector('[data-hint="email"]');
+      const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+      if (!pattern.test(value)) {
+        field.classList.add('error');
+        field.classList.remove('success');
+        hint.textContent = 'Please enter a valid email.';
+        return false;
+      }
+
+      field.classList.remove('error');
+      field.classList.add('success');
+      hint.textContent = 'Valid email format.';
+      return true;
+    };
+
+    const validatePhone = () => {
+      const value = fieldMap.phone.value.trim();
+      const field = fieldMap.phone.closest('.field');
+      const hint = document.querySelector('[data-hint="phone"]');
+      const pattern = /^\d{10}$/;
+
+      if (!pattern.test(value)) {
+        field.classList.add('error');
+        field.classList.remove('success');
+        hint.textContent = 'Phone number should contain exactly 10 digits.';
+        return false;
+      }
+
+      field.classList.remove('error');
+      field.classList.add('success');
+      hint.textContent = 'Valid phone number.';
+      return true;
+    };
+
+    Object.entries(fieldMap).forEach(([key, field]) => {
+      field.addEventListener('focus', () => {
+        field.closest('.field').classList.add('active');
+      });
+
+      field.addEventListener('blur', () => {
+        field.closest('.field').classList.remove('active');
+        if (key === 'name') validateName();
+        if (key === 'email') validateEmail();
+        if (key === 'phone') validatePhone();
+      });
+
+      field.addEventListener('change', () => {
+        if (key === 'name') validateName();
+        if (key === 'email') validateEmail();
+        if (key === 'phone') validatePhone();
+      });
+    });
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      formStatus.className = 'status';
+
+      const isNameValid = validateName();
+      const isEmailValid = validateEmail();
+      const isPhoneValid = validatePhone();
+
+      if (isNameValid && isEmailValid && isPhoneValid) {
+        formStatus.classList.add('success');
+        formStatus.textContent = 'Form submitted successfully! All fields are valid.';
+      } else {
+        formStatus.classList.add('error');
+        formStatus.textContent = 'Please correct the highlighted fields before submitting.';
+      }
+    });
+  </script>
+</body>
+</html>
