@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VAC 11 — Countdown &amp; Class Scheduler</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f4f8;
+      color: #1a1a2e; min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 30px 15px;
+    }
+
+    /* Header */
+    .header { text-align: center; margin-bottom: 30px; }
+    .header h1 { font-size: 1.6rem; color: #2c3e50; }
+    .header p  { color: #555; font-size: .9rem; margin-top: 4px; }
+
+    /* Card */
+    .card {
+      background: #fff;
+      border: 1px solid #dde1e6;
+      border-radius: 14px; padding: 24px;
+      width: 100%; max-width: 520px; margin-bottom: 24px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    }
+    .card h2 { font-size: 1.1rem; margin-bottom: 14px; color: #34495e; }
+
+    /* Countdown */
+    #countdown {
+      display: flex; justify-content: center; gap: 14px;
+      font-size: 2rem; font-weight: 700; color: #2c3e50;
+    }
+    #countdown span {
+      background: #eaf0f7; border-radius: 10px;
+      padding: 10px 16px; min-width: 70px;
+    }
+    #countdown small { font-size: .6em; color: #888; margin-left: 2px; }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    th, td { padding: 10px; text-align: left; }
+    th { border-bottom: 2px solid #dde1e6; font-size: .85rem; color: #777; }
+    td { border-bottom: 1px solid #eee; }
+
+    /* Fade-in animation for schedule rows */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    tr { opacity: 0; }
+
+    /* Responsive */
+    @media (max-width: 480px) {
+      #countdown { font-size: 1.4rem; gap: 8px; }
+      #countdown span { padding: 8px 10px; min-width: 55px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>⏱ Countdown &amp; Class Scheduler</h1>
+    <p>Pranav Lakhe &nbsp;|&nbsp; PRN: 24070521248</p>
+  </div>
+
+  <!-- Countdown Card -->
+  <div class="card">
+    <h2>⏳ Countdown to New Year 2027</h2>
+    <div id="countdown">Loading...</div>
+  </div>
+
+  <!-- Schedule Card -->
+  <div class="card">
+    <h2>📅 Today's Class Schedule</h2>
+    <table>
+      <thead>
+        <tr style="opacity:1"><th>#</th><th>Subject</th><th>Time</th></tr>
+      </thead>
+      <tbody id="schedule-body"></tbody>
+    </table>
+  </div>
+
+  <!-- Load app.js as ES6 module -->
+  <script type="module" src="app.js"></script>
+</body>
+</html>
