@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VAC 12 — Real-Time Productivity Dashboard</title>
+  <meta name="description" content="Interactive real-time web app using JavaScript, jQuery, DOM, events, storage, and AJAX." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Theme Toggle -->
+  <button id="theme-toggle" title="Toggle theme">🌙</button>
+
+  <!-- Header -->
+  <header id="app-header">
+    <div class="header-left">
+      <h1 id="greeting">Good Evening</h1>
+      <p class="subtitle">Pranav Lakhe &nbsp;|&nbsp; PRN: 24070521248</p>
+    </div>
+    <div class="header-right">
+      <div id="live-clock" class="clock">--:--:--</div>
+      <div id="live-date" class="date">Loading...</div>
+    </div>
+  </header>
+
+  <!-- Main Dashboard Grid -->
+  <main class="dashboard">
+
+    <!-- Notes Section -->
+    <section class="card card-notes" id="notes-card">
+      <div class="card-header">
+        <h2>📝 Quick Notes</h2>
+        <input type="text" id="note-search" placeholder="Search notes..." autocomplete="off" />
+      </div>
+      <div class="note-input-row">
+        <input type="text" id="note-title" placeholder="Title" autocomplete="off" />
+        <input type="text" id="note-text" placeholder="Write a note..." autocomplete="off" />
+        <button id="add-note-btn">+ Add</button>
+      </div>
+      <ul id="notes-list"></ul>
+      <p id="notes-empty" class="empty-msg">No notes yet — add one above!</p>
+      <div class="notes-footer">
+        <span id="notes-count">0 notes</span>
+        <button id="clear-notes-btn" class="btn-danger">Clear All</button>
+      </div>
+    </section>
+
+    <!-- Right Column -->
+    <div class="right-col">
+
+      <!-- Quote Card -->
+      <section class="card card-quote" id="quote-card">
+        <h2>💬 Quote of the Moment</h2>
+        <blockquote id="quote-text">Loading...</blockquote>
+        <cite id="quote-author">—</cite>
+        <button id="new-quote-btn">New Quote ↻</button>
+      </section>
+
+      <!-- GitHub Lookup -->
+      <section class="card card-github" id="github-card">
+        <h2>🐙 GitHub Profile Lookup</h2>
+        <div class="github-search-row">
+          <input type="text" id="github-input" placeholder="Enter GitHub username..." autocomplete="off" />
+          <button id="github-search-btn">Search</button>
+        </div>
+        <div id="github-result" class="github-result hidden">
+          <img id="gh-avatar" alt="Avatar" />
+          <div class="gh-info">
+            <h3 id="gh-name">—</h3>
+            <p id="gh-bio">—</p>
+            <div class="gh-stats">
+              <span id="gh-repos">0 repos</span>
+              <span id="gh-followers">0 followers</span>
+              <span id="gh-following">0 following</span>
+            </div>
+            <a id="gh-link" href="#" target="_blank" rel="noopener">View Profile →</a>
+          </div>
+        </div>
+        <p id="github-error" class="error-msg hidden">User not found.</p>
+      </section>
+
+      <!-- Todo / Tasks -->
+      <section class="card card-tasks" id="tasks-card">
+        <h2>✅ Today's Tasks</h2>
+        <div class="task-input-row">
+          <input type="text" id="task-input" placeholder="Add a task..." autocomplete="off" />
+          <button id="add-task-btn">+</button>
+        </div>
+        <ul id="task-list"></ul>
+        <p id="tasks-empty" class="empty-msg">All clear — nothing to do!</p>
+        <div class="task-progress">
+          <div class="progress-bar"><div id="progress-fill" class="progress-fill"></div></div>
+          <span id="task-progress-text">0 / 0 completed</span>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <footer>
+    <p>VAC 12 — DOM · Events · Storage · AJAX · jQuery &nbsp;|&nbsp; Pranav Lakhe</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
